@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ - Bolt Flasher</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <a href="/" class="logo">⚡ Bolt Flasher</a>
+                <ul class="nav-links">
+                    <li><a href="/#features">Features</a></li>
+                    <li><a href="/#pricing">Pricing</a></li>
+                </ul>
+                <div class="nav-buttons">
+                    <button class="btn btn-primary" onclick="window.location.href='login.html'">Login</button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <section class="section">
+        <div class="container">
+            <h1 style="text-align: center; margin-bottom: 50px;">Frequently Asked Questions</h1>
+            
+            <div style="max-width: 800px; margin: 0 auto;">
+                <div style="margin-bottom: 30px; background: rgba(251, 191, 36, 0.05); border: 1px solid rgba(251, 191, 36, 0.2); border-radius: 8px; padding: 20px;">
+                    <h3 style="color: #fbbf24; margin-bottom: 10px; cursor: pointer;" onclick="toggleAnswer(this)">What is a flash transaction? ▼</h3>
+                    <p style="color: #d1d5db; display: none;" class="answer">A flash transaction is a temporary cryptocurrency transfer that allows users to move digital assets across blockchains instantly. It's perfect for testing, arbitrage, and quick settlements.</p>
+                </div>
+
+                <div style="margin-bottom: 30px; background: rgba(251, 191, 36, 0.05); border: 1px solid rgba(251, 191, 36, 0.2); border-radius: 8px; padding: 20px;">
+                    <h3 style="color: #fbbf24; margin-bottom: 10px; cursor: pointer;" onclick="toggleAnswer(this)">Is Bolt Flasher secure? ▼</h3>
+                    <p style="color: #d1d5db; display: none;" class="answer">Yes, we use military-grade encryption, multi-factor authentication, and advanced security protocols to protect your account and transactions. Your funds are always secured.</p>
+                </div>
+
+                <div style="margin-bottom: 30px; background: rgba(251, 191, 36, 0.05); border: 1px solid rgba(251, 191, 36, 0.2); border-radius: 8px; padding: 20px;">
+                    <h3 style="color: #fbbf24; margin-bottom: 10px; cursor: pointer;" onclick="toggleAnswer(this)">What cryptocurrencies are supported? ▼</h3>
+                    <p style="color: #d1d5db; display: none;" class="answer">We support USDT, Bitcoin, Ethereum, BNB, TRON, and many other major cryptocurrencies on multiple blockchains including Ethereum, Bitcoin, BSC, Tron, and Polygon.</p>
+                </div>
+
+                <div style="margin-bottom: 30px; background: rgba(251, 191, 36, 0.05); border: 1px solid rgba(251, 191, 36, 0.2); border-radius: 8px; padding: 20px;">
+                    <h3 style="color: #fbbf24; margin-bottom: 10px; cursor: pointer;" onclick="toggleAnswer(this)">How long does a transaction take? ▼</h3>
+                    <p style="color: #d1d5db; display: none;" class="answer">Most transactions are completed in seconds. The exact time depends on network congestion and blockchain confirmation times, typically ranging from 10 seconds to 5 minutes.</p>
+                </div>
+
+                <div style="margin-bottom: 30px; background: rgba(251, 191, 36, 0.05); border: 1px solid rgba(251, 191, 36, 0.2); border-radius: 8px; padding: 20px;">
+                    <h3 style="color: #fbbf24; margin-bottom: 10px; cursor: pointer;" onclick="toggleAnswer(this)">What are your fees? ▼</h3>
+                    <p style="color: #d1d5db; display: none;" class="answer">Our fees start at a competitive 2% per transaction for most users. Premium users enjoy lower rates. Enterprise customers can negotiate custom pricing.</p>
+                </div>
+
+                <div style="margin-bottom: 30px; background: rgba(251, 191, 36, 0.05); border: 1px solid rgba(251, 191, 36, 0.2); border-radius: 8px; padding: 20px;">
+                    <h3 style="color: #fbbf24; margin-bottom: 10px; cursor: pointer;" onclick="toggleAnswer(this)">Is there a minimum transaction amount? ▼</h3>
+                    <p style="color: #d1d5db; display: none;" class="answer">No minimum amount required. You can flash any amount, from small test transactions to large institutional transfers.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2025 Bolt Crypto Flasher. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleAnswer(element) {
+            const answer = element.nextElementSibling;
+            if (answer.style.display === 'none') {
+                answer.style.display = 'block';
+                element.textContent = element.textContent.replace('▼', '▲');
+            } else {
+                answer.style.display = 'none';
+                element.textContent = element.textContent.replace('▲', '▼');
+            }
+        }
+    </script>
+</body>
+</html>
