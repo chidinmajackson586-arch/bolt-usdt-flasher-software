@@ -28,9 +28,9 @@
             <h1 style="margin-bottom: 30px;">Create Your Account</h1>
             <form id="signupForm" onsubmit="handleSignup(event)" style="background: linear-gradient(135deg, rgba(251, 191, 36, 0.05) 0%, transparent 100%); border: 1px solid rgba(251, 191, 36, 0.2); border-radius: 12px; padding: 40px; backdrop-filter: blur(10px);">
                 <div id="message" style="margin-bottom: 15px; padding: 10px; border-radius: 6px; display: none;"></div>
-                <input type="email" id="email" placeholder="Email Address" style="width: 100%; box-sizing: border-box; padding: 12px; margin-bottom: 15px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(251, 191, 36, 0.2); border-radius: 6px; color: white; font-size: 16px;">
-                <input type="password" id="password" placeholder="Password" style="width: 100%; box-sizing: border-box; padding: 12px; margin-bottom: 15px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(251, 191, 36, 0.2); border-radius: 6px; color: white; font-size: 16px;">
-                <input type="password" id="confirmPassword" placeholder="Confirm Password" style="width: 100%; box-sizing: border-box; padding: 12px; margin-bottom: 15px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(251, 191, 36, 0.2); border-radius: 6px; color: white; font-size: 16px;">
+                <input type="email" id="email" name="email" placeholder="Email Address" style="width: 100%; box-sizing: border-box; padding: 12px; margin-bottom: 15px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(251, 191, 36, 0.2); border-radius: 6px; color: white; font-size: 16px;">
+                <input type="password" id="password" name="password" placeholder="Password" style="width: 100%; box-sizing: border-box; padding: 12px; margin-bottom: 15px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(251, 191, 36, 0.2); border-radius: 6px; color: white; font-size: 16px;">
+                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" style="width: 100%; box-sizing: border-box; padding: 12px; margin-bottom: 15px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(251, 191, 36, 0.2); border-radius: 6px; color: white; font-size: 16px;">
                 <label style="display: flex; align-items: center; margin-bottom: 20px; color: #d1d5db;">
                     <input type="checkbox" id="terms" style="margin-right: 10px;">
                     I agree to the <a href="terms.html" style="color: #fbbf24; text-decoration: none;">Terms of Service</a> and <a href="privacy.html" style="color: #fbbf24; text-decoration: none;">Privacy Policy</a>
@@ -39,10 +39,17 @@
                 <p style="margin-top: 20px; color: #d1d5db;">Already have an account? <a href="login.html" style="color: #fbbf24; text-decoration: none;">Login here</a></p>
             </form>
             <script>
-                console.log('Signup script loaded');
+                // Log immediately to verify script is loaded
+                window.addEventListener('DOMContentLoaded', () => {
+                    console.log('✅ Signup page loaded');
+                    const form = document.getElementById('signupForm');
+                    if (form) {
+                        console.log('✅ Signup form found');
+                    }
+                });
                 
                 function handleSignup(event) {
-                    console.log('handleSignup called', event);
+                    console.log('🔐 handleSignup called');
                     event.preventDefault();
                     
                     const email = document.getElementById('email').value.trim();
@@ -51,45 +58,47 @@
                     const terms = document.getElementById('terms').checked;
                     const messageDiv = document.getElementById('message');
                     
-                    console.log('Form submitted with:', { email, password, confirmPassword, terms });
+                    console.log('Signup attempt:', { email, passwordLength: password.length, confirmPasswordLength: confirmPassword.length, terms });
                     
                     // Show immediate feedback
                     messageDiv.style.display = 'block';
                     messageDiv.style.backgroundColor = 'rgba(251, 191, 36, 0.2)';
                     messageDiv.style.borderLeft = '4px solid #fbbf24';
                     messageDiv.style.color = '#fcd34d';
-                    messageDiv.textContent = 'Processing...';
+                    messageDiv.textContent = '⏳ Processing...';
                     
                     // Validation
                     if (!email || !password || !confirmPassword) {
-                        showMessage(messageDiv, 'Please fill in all fields', 'error');
+                        showMessage(messageDiv, '❌ Please fill in all fields', 'error');
                         return;
                     }
                     
                     if (!email.includes('@')) {
-                        showMessage(messageDiv, 'Please enter a valid email', 'error');
+                        showMessage(messageDiv, '❌ Please enter a valid email', 'error');
                         return;
                     }
                     
                     if (password.length < 6) {
-                        showMessage(messageDiv, 'Password must be at least 6 characters', 'error');
+                        showMessage(messageDiv, '❌ Password must be at least 6 characters', 'error');
                         return;
                     }
                     
                     if (password !== confirmPassword) {
-                        showMessage(messageDiv, 'Passwords do not match', 'error');
+                        showMessage(messageDiv, '❌ Passwords do not match', 'error');
                         return;
                     }
                     
                     if (!terms) {
-                        showMessage(messageDiv, 'You must accept the Terms and Privacy Policy', 'error');
+                        showMessage(messageDiv, '❌ You must accept the Terms and Privacy Policy', 'error');
                         return;
                     }
                     
                     // Check if email already exists
                     const users = JSON.parse(localStorage.getItem('bolt_users') || '{}');
+                    console.log('📦 Users in storage:', Object.keys(users));
+                    
                     if (users[email]) {
-                        showMessage(messageDiv, 'This email is already registered', 'error');
+                        showMessage(messageDiv, '❌ This email is already registered', 'error');
                         return;
                     }
                     
@@ -98,7 +107,7 @@
                     localStorage.setItem('bolt_users', JSON.stringify(users));
                     localStorage.setItem('bolt_currentUser', email);
                     
-                    console.log('Account created:', email);
+                    console.log('✅ Account created:', email);
                     showMessage(messageDiv, '✅ Account created! Redirecting in 2 seconds...', 'success');
                     
                     setTimeout(() => window.location.href = '/', 2000);
