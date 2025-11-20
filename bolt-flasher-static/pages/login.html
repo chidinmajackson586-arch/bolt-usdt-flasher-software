@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Bolt Flasher</title>
     <link rel="stylesheet" href="../css/style.css">
+    <script src="../config.js"></script>
 </head>
 <body>
     <header>
@@ -72,9 +73,9 @@
                     }
                     
                     // Send to backend API
-                    const backendUrl = 'http://localhost:5000' || 'https://bolt-flasher-api.vercel.app'; // Change to your backend URL
+                    const backendUrl = API_CONFIG.BASE_URL;
                     
-                    fetch(`${backendUrl}/api/auth/login`, {
+                    fetch(`${backendUrl}${API_ENDPOINTS.login}`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
