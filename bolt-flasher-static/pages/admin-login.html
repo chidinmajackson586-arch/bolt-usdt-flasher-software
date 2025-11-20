@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Bolt Flasher</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="../config.js"></script>
+    <style>
+        .admin-badge {
+            background: linear-gradient(135deg, #ff6b00, #fbbf24);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 20px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <a href="/" class="logo">⚡ Bolt Flasher</a>
+                <ul class="nav-links">
+                    <li><a href="/#features">Features</a></li>
+                    <li><a href="/#pricing">Pricing</a></li>
+                    <li><a href="faq.html">FAQ</a></li>
+                </ul>
+                <div class="nav-buttons">
+                    <button class="btn btn-outline" onclick="window.location.href='login.html'">User Login</button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <section class="section" style="min-height: 80vh; display: flex; align-items: center;">
+        <div class="container" style="max-width: 500px; text-align: center;">
+            <h1 style="margin-bottom: 10px;">Admin Portal</h1>
+            <p style="color: #d1d5db; margin-bottom: 30px;">Manage Bolt Flasher Platform</p>
+            
+            <form id="adminLoginForm" onsubmit="handleAdminLogin(event)" style="background: linear-gradient(135deg, rgba(251, 191, 36, 0.05) 0%, transparent 100%); border: 1px solid rgba(251, 191, 36, 0.2); border-radius: 12px; padding: 40px; backdrop-filter: blur(10px);">
+                <div id="message" style="margin-bottom: 15px; padding: 10px; border-radius: 6px; display: none;"></div>
+                
+                <input type="email" id="email" name="email" placeholder="Admin Email" style="width: 100%; box-sizing: border-box; padding: 12px; margin-bottom: 15px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(251, 191, 36, 0.2); border-radius: 6px; color: white; font-size: 16px;">
+                
+                <input type="password" id="password" name="password" placeholder="Admin Password" style="width: 100%; box-sizing: border-box; padding: 12px; margin-bottom: 20px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(251, 191, 36, 0.2); border-radius: 6px; color: white; font-size: 16px;">
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%; box-sizing: border-box; cursor: pointer;">Admin Login</button>
+                
+                <p style="margin-top: 20px; color: #d1d5db; font-size: 14px;">
+                    Not an admin? <a href="login.html" style="color: #fbbf24; text-decoration: none;">User Login</a>
+                </p>
+            </form>
+
+            <div class="admin-badge">🔐 ADMIN CREDENTIALS PROVIDED</div>
+
+            <script>
+                window.addEventListener('DOMContentLoaded', () => {
+                    console.log('✅ Admin login page loaded');
+                    // Check if already logged in as admin
+                    const adminToken = localStorage.getItem('bolt_admin_token');
+                    if (adminToken) {
+                        console.log('✅ Admin already logged in, redirecting...');
+                        setTimeout(() => window.location.href = '/admin-dashboard.html', 1000);
+                    }
+                });
+
+                function handleAdminLogin(event) {
+                    console.log('🔐 Admin login attempted');
+                    event.preventDefault();
+
+                    const email = document.getElementById('email').value.trim();
+                    const password = document.getElementById('password').value.trim();
+                    const messageDiv = document.getElementById('message');
+
+                    // Show processing feedback
+                    messageDiv.style.display = 'block';
+                    messageDiv.style.backgroundColor = 'rgba(251, 191, 36, 0.2)';
+                    messageDiv.style.borderLeft = '4px solid #fbbf24';
+                    messageDiv.style.color = '#fcd34d';
+                    messageDiv.textContent = '⏳ Verifying admin credentials...';
+
+                    if (!email || !password) {
+                        showMessage(messageDiv, '❌ Please fill in all fields', 'error');
+                        return;
+                    }
+
+                    // Send to backend API
+                    const backendUrl = API_CONFIG.BASE_URL;
+
+                    fetch(`${backendUrl}/api/auth/admin-login`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ email, password })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.error) {
+                            showMessage(messageDiv, `❌ ${data.error}`, 'error');
+                            console.log('Admin login error:', data.error);
+                        } else if (data.user && data.user.role === 'admin') {
+                            console.log('✅ Admin login successful');
+                            // Store admin token
+                            localStorage.setItem('bolt_admin_token', data.token);
+                            localStorage.setItem('bolt_admin_user', JSON.stringify(data.user));
+                            showMessage(messageDiv, '✅ Admin access granted! Redirecting...', 'success');
+                            setTimeout(() => window.location.href = '/admin-dashboard.html', 2000);
+                        } else {
+                            showMessage(messageDiv, '❌ Admin access denied', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Network error:', error);
+                        showMessage(messageDiv, '❌ Network error. Backend may not be running', 'error');
+                    });
+                }
+
+                function showMessage(div, text, type) {
+                    div.style.display = 'block';
+                    div.textContent = text;
+                    if (type === 'success') {
+                        div.style.backgroundColor = 'rgba(34, 197, 94, 0.2)';
+                        div.style.borderLeft = '4px solid #22c55e';
+                        div.style.color = '#86efac';
+                    } else {
+                        div.style.backgroundColor = 'rgba(239, 68, 68, 0.2)';
+                        div.style.borderLeft = '4px solid #ef4444';
+                        div.style.color = '#fecaca';
+                    }
+                }
+            </script>
+        </div>
+    </section>
+
+    <footer style="margin-top: 100px;">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2025 Bolt Crypto Flasher. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

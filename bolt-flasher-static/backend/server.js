@@ -14,6 +14,12 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-producti
 app.use(cors());
 app.use(express.json());
 
+// Admin Credentials (Change these in production!)
+const ADMIN_CREDENTIALS = {
+  email: 'admin@boltflasher.com',
+  password: 'AdminBolt2025!Secure'
+};
+
 // Database file path
 const usersFile = path.join(__dirname, 'users.json');
 
@@ -53,6 +59,39 @@ const comparePasswords = async (password, hash) => {
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'Backend is running!' });
+});
+
+// Admin Login
+app.post('/api/auth/admin-login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Validation
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password are required' });
+    }
+
+    // Check admin credentials
+    if (email.toLowerCase() !== ADMIN_CREDENTIALS.email.toLowerCase() || password !== ADMIN_CREDENTIALS.password) {
+      return res.status(401).json({ error: 'Invalid admin credentials' });
+    }
+
+    // Create JWT token for admin
+    const token = jwt.sign(
+      { id: 'admin', email: ADMIN_CREDENTIALS.email, role: 'admin' },
+      JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+
+    res.json({
+      message: 'Admin login successful',
+      token,
+      user: { id: 'admin', email: ADMIN_CREDENTIALS.email, role: 'admin' }
+    });
+  } catch (error) {
+    console.error('Admin login error:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 // Signup
@@ -174,12 +213,48 @@ app.get('/api/users', (req, res) => {
   });
 });
 
+// Admin Dashboard - Get Platform Stats
+app.get('/api/admin/dashboard', (req, res) => {
+  try {
+    const token = req.headers.authorization?.replace('Bearer ', '');
+    
+    if (!token) {
+      return res.status(401).json({ error: 'No token provided' });
+    }
+
+    const decoded = jwt.verify(token, JWT_SECRET);
+    
+    // Check if user is admin
+    if (decoded.role !== 'admin') {
+      return res.status(403).json({ error: 'Admin access required' });
+    }
+
+    const users = readUsers();
+    const stats = {
+      totalUsers: users.length,
+      users: users.map(u => ({
+        id: u.id,
+        email: u.email,
+        createdAt: u.createdAt
+      })),
+      systemStatus: 'Running',
+      timestamp: new Date().toISOString()
+    };
+
+    res.json(stats);
+  } catch (error) {
+    res.status(401).json({ error: 'Invalid or expired token' });
+  }
+});
+
 // Start server
 app.listen(PORT, () => {
   console.log(`🚀 Backend server running on http://localhost:${PORT}`);
   console.log(`📝 API endpoints:`);
+  console.log(`   POST /api/auth/admin-login - Admin login`);
   console.log(`   POST /api/auth/signup - Create account`);
   console.log(`   POST /api/auth/login - Login`);
   console.log(`   GET /api/auth/me - Get current user`);
+  console.log(`   GET /api/admin/dashboard - Admin dashboard (requires admin token)`);
   console.log(`   GET /api/users - List all users (testing)`);
 });
