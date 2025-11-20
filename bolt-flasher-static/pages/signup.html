@@ -67,7 +67,7 @@
                     messageDiv.style.color = '#fcd34d';
                     messageDiv.textContent = '⏳ Processing...';
                     
-                    // Validation
+                    // Client-side validation
                     if (!email || !password || !confirmPassword) {
                         showMessage(messageDiv, '❌ Please fill in all fields', 'error');
                         return;
@@ -93,24 +93,34 @@
                         return;
                     }
                     
-                    // Check if email already exists
-                    const users = JSON.parse(localStorage.getItem('bolt_users') || '{}');
-                    console.log('📦 Users in storage:', Object.keys(users));
+                    // Send to backend API
+                    const backendUrl = 'http://localhost:5000' || 'https://bolt-flasher-api.vercel.app'; // Change to your backend URL
                     
-                    if (users[email]) {
-                        showMessage(messageDiv, '❌ This email is already registered', 'error');
-                        return;
-                    }
-                    
-                    // Create new user
-                    users[email] = { password: password, createdAt: new Date().toISOString() };
-                    localStorage.setItem('bolt_users', JSON.stringify(users));
-                    localStorage.setItem('bolt_currentUser', email);
-                    
-                    console.log('✅ Account created:', email);
-                    showMessage(messageDiv, '✅ Account created! Redirecting in 2 seconds...', 'success');
-                    
-                    setTimeout(() => window.location.href = '/', 2000);
+                    fetch(`${backendUrl}/api/auth/signup`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ email, password, confirmPassword })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.error) {
+                            showMessage(messageDiv, `❌ ${data.error}`, 'error');
+                            console.log('Signup error:', data.error);
+                        } else {
+                            console.log('✅ Account created:', data.user.email);
+                            // Store token
+                            localStorage.setItem('bolt_token', data.token);
+                            localStorage.setItem('bolt_user', JSON.stringify(data.user));
+                            showMessage(messageDiv, '✅ Account created! Redirecting...', 'success');
+                            setTimeout(() => window.location.href = '/', 2000);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Network error:', error);
+                        showMessage(messageDiv, '❌ Network error. Make sure backend is running on port 5000', 'error');
+                    });
                 }
                 
                 function showMessage(div, text, type) {
