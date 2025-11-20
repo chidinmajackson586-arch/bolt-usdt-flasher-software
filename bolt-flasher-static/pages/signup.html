@@ -28,24 +28,27 @@
             <h1 style="margin-bottom: 30px;">Create Your Account</h1>
             <form id="signupForm" style="background: linear-gradient(135deg, rgba(251, 191, 36, 0.05) 0%, transparent 100%); border: 1px solid rgba(251, 191, 36, 0.2); border-radius: 12px; padding: 40px; backdrop-filter: blur(10px);">
                 <div id="message" style="margin-bottom: 15px; padding: 10px; border-radius: 6px; display: none;"></div>
-                <input type="email" id="email" placeholder="Email Address" style="width: 100%; padding: 12px; margin-bottom: 15px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(251, 191, 36, 0.2); border-radius: 6px; color: white;" required>
-                <input type="password" id="password" placeholder="Password" style="width: 100%; padding: 12px; margin-bottom: 15px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(251, 191, 36, 0.2); border-radius: 6px; color: white;" required>
-                <input type="password" id="confirmPassword" placeholder="Confirm Password" style="width: 100%; padding: 12px; margin-bottom: 15px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(251, 191, 36, 0.2); border-radius: 6px; color: white;" required>
+                <input type="email" id="email" placeholder="Email Address" style="width: 100%; box-sizing: border-box; padding: 12px; margin-bottom: 15px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(251, 191, 36, 0.2); border-radius: 6px; color: white; font-size: 16px;" required>
+                <input type="password" id="password" placeholder="Password" style="width: 100%; box-sizing: border-box; padding: 12px; margin-bottom: 15px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(251, 191, 36, 0.2); border-radius: 6px; color: white; font-size: 16px;" required>
+                <input type="password" id="confirmPassword" placeholder="Confirm Password" style="width: 100%; box-sizing: border-box; padding: 12px; margin-bottom: 15px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(251, 191, 36, 0.2); border-radius: 6px; color: white; font-size: 16px;" required>
                 <label style="display: flex; align-items: center; margin-bottom: 20px; color: #d1d5db;">
                     <input type="checkbox" id="terms" required style="margin-right: 10px;">
                     I agree to the <a href="terms.html" style="color: #fbbf24; text-decoration: none;">Terms of Service</a> and <a href="privacy.html" style="color: #fbbf24; text-decoration: none;">Privacy Policy</a>
                 </label>
-                <button type="submit" class="btn btn-primary" style="width: 100%;">Create Account</button>
+                <button type="submit" class="btn btn-primary" style="width: 100%; box-sizing: border-box; cursor: pointer;">Create Account</button>
                 <p style="margin-top: 20px; color: #d1d5db;">Already have an account? <a href="login.html" style="color: #fbbf24; text-decoration: none;">Login here</a></p>
             </form>
             <script>
                 document.getElementById('signupForm').addEventListener('submit', function(e) {
                     e.preventDefault();
+                    console.log('Signup form submitted');
                     const email = document.getElementById('email').value.trim();
                     const password = document.getElementById('password').value.trim();
                     const confirmPassword = document.getElementById('confirmPassword').value.trim();
                     const terms = document.getElementById('terms').checked;
                     const messageDiv = document.getElementById('message');
+                    
+                    console.log('Form data:', { email, password, confirmPassword, terms });
                     
                     if (!email || !password || !confirmPassword) {
                         messageDiv.style.display = 'block';
