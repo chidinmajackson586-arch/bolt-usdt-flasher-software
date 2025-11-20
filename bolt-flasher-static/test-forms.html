@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Form Testing</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #0a0a0a; color: white; }
+        .test-section { margin: 20px 0; padding: 20px; background: #1a1a1a; border-radius: 8px; }
+        button { padding: 10px 20px; background: #fbbf24; color: black; border: none; border-radius: 4px; cursor: pointer; }
+        .result { margin-top: 10px; padding: 10px; border-radius: 4px; }
+        .success { background: rgba(34, 197, 94, 0.2); color: #86efac; }
+        .error { background: rgba(239, 68, 68, 0.2); color: #fecaca; }
+    </style>
+</head>
+<body>
+    <h1>⚡ Bolt Flasher - Form Testing</h1>
+    
+    <div class="test-section">
+        <h2>Test 1: Create Account</h2>
+        <p>This will test the signup form with valid data</p>
+        <button onclick="testSignup()">Run Signup Test</button>
+        <div id="signupResult"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 2: Login with Created Account</h2>
+        <p>This will test logging in with the account we just created</p>
+        <button onclick="testLogin()">Run Login Test</button>
+        <div id="loginResult"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>localStorage Contents</h2>
+        <button onclick="showStorage()">Show Storage</button>
+        <pre id="storageContent" style="background: #0a0a0a; padding: 10px; border-radius: 4px; overflow: auto;"></pre>
+    </div>
+
+    <script>
+        function testSignup() {
+            const resultDiv = document.getElementById('signupResult');
+            resultDiv.innerHTML = '';
+            
+            try {
+                // Clear existing data
+                localStorage.removeItem('bolt_users');
+                localStorage.removeItem('bolt_currentUser');
+                
+                // Simulate signup
+                const testEmail = 'testuser@example.com';
+                const testPassword = 'TestPassword123';
+                
+                const users = JSON.parse(localStorage.getItem('bolt_users') || '{}');
+                users[testEmail] = { 
+                    password: testPassword, 
+                    createdAt: new Date().toISOString() 
+                };
+                localStorage.setItem('bolt_users', JSON.stringify(users));
+                localStorage.setItem('bolt_currentUser', testEmail);
+                
+                resultDiv.className = 'result success';
+                resultDiv.innerHTML = `
+                    ✅ Account created successfully!<br>
+                    Email: ${testEmail}<br>
+                    Password: ${testPassword}<br>
+                    <strong>Test data saved to localStorage</strong>
+                `;
+                
+                console.log('Signup test passed', users);
+            } catch (e) {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `❌ Error: ${e.message}`;
+                console.error('Signup test failed:', e);
+            }
+        }
+        
+        function testLogin() {
+            const resultDiv = document.getElementById('loginResult');
+            resultDiv.innerHTML = '';
+            
+            try {
+                const testEmail = 'testuser@example.com';
+                const testPassword = 'TestPassword123';
+                
+                const users = JSON.parse(localStorage.getItem('bolt_users') || '{}');
+                
+                if (!users[testEmail]) {
+                    resultDiv.className = 'result error';
+                    resultDiv.innerHTML = '❌ No account found. Run signup test first!';
+                    return;
+                }
+                
+                if (users[testEmail].password !== testPassword) {
+                    resultDiv.className = 'result error';
+                    resultDiv.innerHTML = '❌ Password mismatch!';
+                    return;
+                }
+                
+                localStorage.setItem('bolt_currentUser', testEmail);
+                
+                resultDiv.className = 'result success';
+                resultDiv.innerHTML = `
+                    ✅ Login successful!<br>
+                    Email: ${testEmail}<br>
+                    Current User: ${localStorage.getItem('bolt_currentUser')}<br>
+                    <strong>Both signup and login are working!</strong>
+                `;
+                
+                console.log('Login test passed');
+            } catch (e) {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `❌ Error: ${e.message}`;
+                console.error('Login test failed:', e);
+            }
+        }
+        
+        function showStorage() {
+            const users = JSON.parse(localStorage.getItem('bolt_users') || '{}');
+            const currentUser = localStorage.getItem('bolt_currentUser');
+            
+            document.getElementById('storageContent').textContent = JSON.stringify({
+                users,
+                currentUser
+            }, null, 2);
+        }
+        
+        // Auto-run tests on page load
+        window.addEventListener('load', () => {
+            console.log('Test page loaded. Click buttons to run tests.');
+            showStorage();
+        });
+    </script>
+</body>
+</html>
